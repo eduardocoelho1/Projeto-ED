@@ -4,58 +4,87 @@
 using namespace std;
 
 struct call991{
-	int e = -1;
-	int id = -1;//atributo secundario
-	float lat = -1, lng = -1, zip = -1;
-	char addr[60] = "-1"; //atributo primario
-	char desc[30] = "-1", title[20] = "-1";
-	char timeStamp[40] = "-1", twp[50] = "-1";
+	int e;
+	int id;//atributo secundario
+	float lat, lng, zip;
+	char addr[150]; //atributo primario
+	char desc[150], title[150];
+	char timeStamp[20], twp[150];
 };
 
 void TrocarRegistro(){
-	cout << "Digite o id dos registros que quer trocar: " << endl;
+	fstream arquivoBin("binario.dat", ios::out|ios::in|ios::binary);
 	int id_registroX, id_registroY;
+	arquivoBin.seekg(0, ios::end);
+	int tamanho = arquivoBin.tellg()/sizeof(call991);
+	cout << "Digite o ID de um dos registros que deseja trocar" << endl;
+	cout << "Intervalo de IDS disponiveis: de 0 a " << tamanho-1 << endl; 
 	cin >> id_registroX;
+	while(id_registroX < 0 or id_registroX >= tamanho){
+		cout << "ID invalido. Digite um ID valido, por favor" << endl;
+		cin >> id_registroX;
+	}
+	cout << "Digite o ID de outro registro para que seja efetuada a troca" << endl;
 	cin >> id_registroY;
-	arquivoBin.seekg(sizeof(call991)*id_registroX, ios::beg);
+	while(id_registroY < 0 or id_registroY >= tamanho or id_registroY == id_registroX){
+		cout << "ID invalido ou ja selecionado. Digite um ID valido que não tenha sido selecionado, por favor" << endl;
+		cin >> id_registroY;
+	}
 	call991 aux1, aux2;
 	int id_aux;
+	arquivoBin.seekg(sizeof(call991)*id_registroX, ios::beg);
 	arquivoBin.read((char*) &aux1, sizeof(call991));
 	arquivoBin.seekg(sizeof(call991)*id_registroY, ios::beg);
 	arquivoBin.read((char*) &aux2, sizeof(call991));
 	id_aux = aux1.id;
 	aux1.id = aux2.id;
 	aux2.id = id_aux;
+	arquivoBin.seekp(sizeof(call991)*id_registroY, ios::beg);
 	arquivoBin.write((const char *) &aux1, sizeof(call991));
 	arquivoBin.seekp(sizeof(call991)*id_registroX, ios::beg);
 	arquivoBin.write((const char*) &aux2, sizeof(call991));
-	arquivoBin.clear();
+	arquivoBin.close();
 	cout << "Dados trocados com sucesso!" << endl;	
-}
+	cout << endl;
+} 
 
 void AlterarRegistro(){
-	cout << "Digite o ID do registro que deseja alterar: " << endl;
+	fstream arquivoBin("binario.dat", ios::out|ios::in|ios::binary);
+	arquivoBin.seekg(0, ios::end);
+	int tamanho = arquivoBin.tellg()/sizeof(call991);
 	int id_registro_desejado;
+	cout << "Digite o ID do registro que deseja alterar" << endl;
+	cout << "Intervalo de IDS disponiveis: de 0 a " << tamanho-1 << endl; 
 	cin >> id_registro_desejado;
+	while(id_registro_desejado < 0 or id_registro_desejado >= tamanho){
+		cout << "ID invalido. Digite um ID valido, por favor" << endl;
+		cin >> id_registro_desejado;
+	}
 	call991 registro_alterado;
 	arquivoBin.seekg(sizeof(call991)*id_registro_desejado, ios::beg);
 	arquivoBin.read((char *) &registro_alterado, sizeof(call991));
+	cout << "Digite os novos campos do registro, na seguinte ordem:" << endl;
+	cout << "lat, lng, desc, zip, title, timeStamp, twp, addr, e" << endl;
 	cin >> registro_alterado.lat;
 	cin >> registro_alterado.lng;
 	cin.ignore();
-	cin.getline(registro_alterado.desc, 30);
+	cin.getline(registro_alterado.desc, 150);
 	cin >> registro_alterado.zip;
 	cin.ignore();
-	cin.getline(registro_alterado.title, 20);
-	cin.getline(registro_alterado.timeStamp, 40);
-	cin.getline(registro_alterado.twp, 50);
-	cin.getline(registro_alterado.addr, 20);
+	cin.getline(registro_alterado.title, 150);
+	cin.getline(registro_alterado.timeStamp, 20);
+	cin.getline(registro_alterado.twp, 150);
+	cin.getline(registro_alterado.addr, 150);
 	cin >> registro_alterado.e;
+	arquivoBin.seekg(sizeof(call991)*id_registro_desejado, ios::beg);
 	arquivoBin.write((const char *) &registro_alterado, sizeof(call991));
 	cout << "Registro alterado com sucesso!" << endl;
-	arquivoBin.clear();
+	arquivoBin.close();
+	cout << endl;
 }
 
 int main() {
-    return 0;
+	TrocarRegistro();
+	AlterarRegistro();
+	return 0;
 }
