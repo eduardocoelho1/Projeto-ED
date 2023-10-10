@@ -13,103 +13,56 @@
 using namespace std;
 
 struct call991{
-	int e = -1;
-	int id = -1;//atributo secundario
-	float lat = -1, lng = -1, zip = -1;
-	char addr[65] = "-1"; //atributo primario
-	char desc[115] = "-1", title[45] = "-1";
-	char timeStamp[40] = "-1", twp[60] = "-1";
+	int e;
+	int id;//atributo secundario
+	float lat, lng, zip;
+	char addr[150]; //atributo primario
+	char desc[150], title[150];
+	char timeStamp[20], twp[150];
 	
-	
-	void imprimir();//imprimira todos os dados na ordem que foram lidos, isto eh como esta no arquivo.
 };
 
 
-
-
-//Id,lat,lng,desc,zip,title,timeStamp,twp,addr,e
-void call991::imprimir(){
-	cout << id << "  " << lat << "   " << lng << "   " << desc << "   " << 
-	zip << "   " << title << "   " << timeStamp << "   " << twp << "   " << addr << "   " << e << endl;
-}
-
-void processamento(ifstream& ler, string arquivo){ 
-	//aqui os dados serao lidos do arquivo CSV, e serão escritos no arquivo binario.
-	
-	call991 *c1 = new call991;
-	unsigned int tam = 0;
-	
-	ofstream escrever("binario.dat", ios::binary);
-	
-	escrever.seekp(0, ios::end); //colocar a posicao de escrita
-	tam = escrever.tellp()/sizeof(call991);
-	escrever.seekp(0, ios::beg);
-	
-	string lixo;
-	
-	char auxiliar;
-	unsigned int aux = 0;
-	int cont = 0;
-	ler >> lixo;
-	
-	//cout << "---------------------------------------------------------------------------------------------------------" << endl;
-	//cout << "| Id    | Lat    |  Lng   | desc    |   zip    |    title | timeStamp   |   twp    |   addr |   e    " << endl;
-	//cout << "----------------------------------------------------------------------------------------------------------" << endl << endl;
-	while(ler >> c1->id and cont <= 1000){
-		//cout << "tam:" << tam << endl;
-		ler >> auxiliar;
-		ler >> c1->lat;
-		ler >> auxiliar;
-		ler >> c1->lng;
-		ler >> auxiliar;
-		
-		ler.getline(c1->desc, 115, ',');
-		ler >> c1->zip;
-		ler >> auxiliar;
-		ler.getline(c1->title, 45, ','); 
-		ler.getline(c1->timeStamp, 40, ',');
-		ler.getline(c1->twp, 60, ',');
-		ler.getline(c1->addr, 65, ',');
-		ler >> c1->e;
-		
-		
-		escrever.seekp(sizeof(call991)*aux);
-		escrever.write((const char *) &c1, sizeof(call991));
-		cont++;
-		aux = cont*tam;
-		escrever.seekp(sizeof(call991)*aux);
-		
-		c1->imprimir();
-		
-	}
-	
-	delete c1;
-	escrever.close();
-}
-
-
-void converter(){
-	//decide se o arquivo existe ou nao,
-	//se o arquivo existir, a conversao começa. Senao o usuario volta a tela inicial
-	
+void converter(){ //Convertera dados do arquivo .csv em arquivo binario
 	string arquivo;
 	cout << "Digite o nome do arquivo: ";
-	//cin >> arquivo;
-	// nome do arquivo é call911_2.csv
-	arquivo = "call911_2.csv";
-	
+	cin >> arquivo;
 	ifstream ler(arquivo);
-	
-	if(ler){
+	if(ler){ // a conversao só ocorrera se o arquivo .csv existir
 		cout << "Arquivo encontrado" << endl;
-		processamento(ler, arquivo);
+		call991 c1;
+		fstream escrever("binario.dat", ios::out|ios::binary); 
+		string lixo;
+		char auxiliar;
+		ler >> lixo;
+		while(ler >> c1.id){ //lera todos os dados do arquivo .csv. 
+			//   A razão de ser ler >> c1.id se deve ao fato de que o id é o primeiro atributo que será lido, 
+			//   isso significa que se ele estiver presente, então a linha toda possui os outros atributos.
+			ler >> auxiliar;
+			ler >> c1.lat;
+			ler >> auxiliar;
+			ler >> c1.lng;
+			ler >> auxiliar;
+			ler.getline(c1.desc, 150, ',');
+			ler >> c1.zip;
+			ler >> auxiliar;
+			ler.getline(c1.title, 150, ','); 
+			ler.getline(c1.timeStamp, 20, ',');
+			ler.getline(c1.twp, 150, ',');
+			ler.getline(c1.addr, 150, ',');
+			ler >> c1.e;
+			escrever.write((const char *) &c1, sizeof(call991)); //escreve os dados obtidos no arquivo binario. 
+			//Funciona que nem o ofstream num arquivo de texto, com a exceção de estar usando um conjunto de bytes.
+		}
+		cout << "Conversao concluida!" << endl << endl;
+		escrever.close();
 	} else {
-		cout << "Arquivo nao encontrado!" << endl;
+		cout << "Arquivo nao encontrado!" << endl << endl;
 	}
 	ler.close();
 }
 
-int main()//Menu prinicipal, bem auto explicatorio
+int main()
 {
 	char comando = '1';
 	
