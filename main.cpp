@@ -13,35 +13,32 @@ struct call991{
 };
 
 void TrocarRegistro(fstream& arquivoBin){ 
-	int id_registroX, id_registroY;
+	int pos_registroX, pos_registroY;
 	arquivoBin.seekg(0, ios::end);
 	int tamanho = arquivoBin.tellg()/sizeof(call991);
 	cout << "==================================================" << endl;
-	cout << "Digite o ID de um dos registros que deseja trocar" << endl;
-	cout << "Intervalo de IDS disponiveis: de 0 a " << tamanho-1 << endl; 
-	cin >> id_registroX;
-	while(id_registroX < 0 or id_registroX >= tamanho){ //nao pode ser negativo nem maior que a quantidade total
-		cout << "ID invalido. Digite um ID valido, por favor" << endl;
-		cin >> id_registroX;
+	cout << "Digite a posicao de um dos registros que deseja trocar" << endl;
+	cout << "Posicoes disponiveis: de 0 a " << tamanho-1 << endl; 
+	cin >> pos_registroX;
+	while(pos_registroX < 0 or pos_registroX >= tamanho){ //nao pode ser negativo nem maior que a quantidade total
+		cout << "Posicao invalida. Digite uma posicao valida, por favor" << endl;
+		cin >> pos_registroX;
 	}
-	cout << "Digite o ID de outro registro para que seja efetuada a troca" << endl;
-	cin >> id_registroY;
-	while(id_registroY < 0 or id_registroY >= tamanho or id_registroY == id_registroX){ //alem das restricoes ja citadas, nao pode ser igual ao outro registro
-		cout << "ID invalido ou ja selecionado. Digite um ID valido que não tenha sido selecionado, por favor" << endl;
-		cin >> id_registroY;
+	cout << "Digite a posicao de outro registro para que seja efetuada a troca" << endl;
+	cin >> pos_registroY;
+	while(pos_registroY < 0 or pos_registroY >= tamanho or pos_registroY == pos_registroX){ //alem das restricoes ja citadas, nao pode ser igual ao outro registro
+		cout << "Posicao invalida ou ja selecionada. Digite uma posicao valida que não tenha sido selecionada, por favor" << endl;
+		cin >> pos_registroY;
 	}
 	call991 aux1, aux2;
-	int id_aux;
-	arquivoBin.seekg(sizeof(call991)*id_registroX, ios::beg);
+	arquivoBin.seekg(sizeof(call991)*pos_registroX, ios::beg);
 	arquivoBin.read((char*) &aux1, sizeof(call991));
-	arquivoBin.seekg(sizeof(call991)*id_registroY, ios::beg);
+	arquivoBin.seekg(sizeof(call991)*pos_registroY, ios::beg);
 	arquivoBin.read((char*) &aux2, sizeof(call991));
-	id_aux = aux1.id; //faz a troca do id de ambas, para que os ids dos registros permanesçam em ordem após a troca das posicoes dos registros
-	aux1.id = aux2.id;
-	aux2.id = id_aux; 
-	arquivoBin.seekp(sizeof(call991)*id_registroY, ios::beg); //escreve cada registro na posicao onde foi lido o outro registro, efetuando a troca
+
+	arquivoBin.seekp(sizeof(call991)*pos_registroY, ios::beg); //escreve cada registro na posicao onde foi lido o outro registro, efetuando a troca
 	arquivoBin.write((const char *) &aux1, sizeof(call991));
-	arquivoBin.seekp(sizeof(call991)*id_registroX, ios::beg);
+	arquivoBin.seekp(sizeof(call991)*pos_registroX, ios::beg);
 	arquivoBin.write((const char*) &aux2, sizeof(call991));
 	cout << "Dados trocados com sucesso!" << endl;	
 	cout << "==================================================" << endl;
@@ -53,19 +50,20 @@ void AlterarRegistro(fstream& arquivoBin){
 	int tamanho = arquivoBin.tellg()/sizeof(call991);
 	int id_registro_desejado;
 	cout << "==================================================" << endl;
-	cout << "Digite o ID do registro que deseja alterar" << endl;
-	cout << "Intervalo de IDS disponiveis: de 0 a " << tamanho-1 << endl; 
+	cout << "Digite a posicao do registro que deseja alterar" << endl;
+	cout << "Posicoes disponiveis: de 0 a " << tamanho-1 << endl; 
 	cin >> id_registro_desejado;
 	while(id_registro_desejado < 0 or id_registro_desejado >= tamanho){
-		cout << "ID invalido. Digite um ID valido, por favor" << endl;
+		cout << "Posicao invalida. Digite uma posicao valida, por favor" << endl;
 		cin >> id_registro_desejado;
 	}
 	call991 registro_alterado;
 	arquivoBin.seekg(sizeof(call991)*id_registro_desejado, ios::beg);
 	arquivoBin.read((char *) &registro_alterado, sizeof(call991)); //le o registro
 	cout << "Digite os novos campos do registro, na seguinte ordem:" << endl;
-	cout << "lat, lng, desc, zip, title, timeStamp, twp, addr, e" << endl;
-	cin >> registro_alterado.lat; //substitui os dados, exceto o id
+	cout << "id, lat, lng, desc, zip, title, timeStamp, twp, addr, e" << endl;
+	cin >> registro_alterado.id;
+	cin >> registro_alterado.lat; //substitui os dados
 	cin >> registro_alterado.lng;
 	cin.ignore();
 	cin.getline(registro_alterado.desc, 121);
