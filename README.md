@@ -16,7 +16,7 @@ Por fim, cada registro será reescrito no arquivo binário na posição do outro
 
 ![ed-projeto (1)](https://github.com/eduardocoelho1/Projeto-ED/assets/138143297/c0139497-dddc-42d3-88bc-722d0a894714)
 
-  **Alteração de um registro**
+  **Alteração de um registro**:
 
 Inicialmente, o usuário deve digitar um número que será o número de identificação do registro que sofrerá a alteração, portanto, não é permitido digitar números de identificação que não estejam no arquivo, como números negativos ou maiores que a quantidade de registros no arquivo. Caso o número digitado não satisfaça a condição citada, então será impressa uma mensagem no terminal dizendo que o número é invalido e solicitará que o usuário digite outro. Isso ocorrerá até que o número seja válido.
 
