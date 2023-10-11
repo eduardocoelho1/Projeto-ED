@@ -12,11 +12,11 @@ struct call991{
 	char timeStamp[20], twp[150];
 };
 
-void TrocarRegistro(){
-	fstream arquivoBin("binario.dat", ios::out|ios::in|ios::binary);
+void TrocarRegistro(fstream& arquivoBin){
 	int id_registroX, id_registroY;
 	arquivoBin.seekg(0, ios::end);
 	int tamanho = arquivoBin.tellg()/sizeof(call991);
+	cout << "==================================================" << endl;
 	cout << "Digite o ID de um dos registros que deseja trocar" << endl;
 	cout << "Intervalo de IDS disponiveis: de 0 a " << tamanho-1 << endl; 
 	cin >> id_registroX;
@@ -43,16 +43,16 @@ void TrocarRegistro(){
 	arquivoBin.write((const char *) &aux1, sizeof(call991));
 	arquivoBin.seekp(sizeof(call991)*id_registroX, ios::beg);
 	arquivoBin.write((const char*) &aux2, sizeof(call991));
-	arquivoBin.close();
 	cout << "Dados trocados com sucesso!" << endl;	
+	cout << "==================================================" << endl;
 	cout << endl;
 } 
 
-void AlterarRegistro(){
-	fstream arquivoBin("binario.dat", ios::out|ios::in|ios::binary);
+void AlterarRegistro(fstream& arquivoBin){
 	arquivoBin.seekg(0, ios::end);
 	int tamanho = arquivoBin.tellg()/sizeof(call991);
 	int id_registro_desejado;
+	cout << "==================================================" << endl;
 	cout << "Digite o ID do registro que deseja alterar" << endl;
 	cout << "Intervalo de IDS disponiveis: de 0 a " << tamanho-1 << endl; 
 	cin >> id_registro_desejado;
@@ -79,12 +79,40 @@ void AlterarRegistro(){
 	arquivoBin.seekg(sizeof(call991)*id_registro_desejado, ios::beg);
 	arquivoBin.write((const char *) &registro_alterado, sizeof(call991));
 	cout << "Registro alterado com sucesso!" << endl;
-	arquivoBin.close();
+	cout << "==================================================" << endl;
 	cout << endl;
 }
 
 int main() {
-	TrocarRegistro();
-	AlterarRegistro();
+	fstream arquivoBin("binario.dat", ios::out|ios::in|ios::binary);
+	bool executa_enquanto = true;
+	int opcao;
+	while(executa_enquanto){
+		cout << "-----------------------------------------------" << endl;
+		cout << "Menu principal" << endl;
+		cout << "-----------------------------------------------" << endl;
+		cout << "0) Sair" << endl;
+		cout << "1) Trocar dois registros" << endl;
+		cout << "2) Alterar um registro" << endl;
+		cout << "Digite sua opcao: ";
+		cin >> opcao;
+		cout << endl;
+		switch(opcao){
+			case 0:
+				executa_enquanto = false;
+				break;
+			case 1:
+				TrocarRegistro(arquivoBin);
+				break;
+			case 2:
+				AlterarRegistro(arquivoBin);
+				break;
+			default:
+				cout << "Opcao invalida" << endl;
+				break;		
+		}
+	}
+	arquivoBin.close();
+
 	return 0;
 }
