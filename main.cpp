@@ -48,21 +48,20 @@ void TrocarRegistro(fstream& arquivoBin){
 void AlterarRegistro(fstream& arquivoBin){
 	arquivoBin.seekg(0, ios::end);
 	int tamanho = arquivoBin.tellg()/sizeof(call991);
-	int id_registro_desejado;
+	int pos_registro_desejado;
 	cout << "==================================================" << endl;
 	cout << "Digite a posicao do registro que deseja alterar" << endl;
 	cout << "Posicoes disponiveis: de 0 a " << tamanho-1 << endl; 
-	cin >> id_registro_desejado;
-	while(id_registro_desejado < 0 or id_registro_desejado >= tamanho){
+	cin >> pos_registro_desejado;
+	while(pos_registro_desejado < 0 or pos_registro_desejado >= tamanho){
 		cout << "Posicao invalida. Digite uma posicao valida, por favor" << endl;
-		cin >> id_registro_desejado;
+		cin >> pos_registro_desejado;
 	}
 	call991 registro_alterado;
-	arquivoBin.seekg(sizeof(call991)*id_registro_desejado, ios::beg);
+	arquivoBin.seekg(sizeof(call991)*pos_registro_desejado, ios::beg);
 	arquivoBin.read((char *) &registro_alterado, sizeof(call991)); //le o registro
 	cout << "Digite os novos campos do registro, na seguinte ordem:" << endl;
-	cout << "id, lat, lng, desc, zip, title, timeStamp, twp, addr, e" << endl;
-	cin >> registro_alterado.id;
+	cout << "lat, lng, desc, zip, title, timeStamp, twp, addr, e" << endl;
 	cin >> registro_alterado.lat; //substitui os dados
 	cin >> registro_alterado.lng;
 	cin.ignore();
@@ -74,7 +73,7 @@ void AlterarRegistro(fstream& arquivoBin){
 	cin.getline(registro_alterado.twp, 18);
 	cin.getline(registro_alterado.addr, 66);
 	cin >> registro_alterado.e;
-	arquivoBin.seekg(sizeof(call991)*id_registro_desejado, ios::beg);
+	arquivoBin.seekg(sizeof(call991)*pos_registro_desejado, ios::beg);
 	arquivoBin.write((const char *) &registro_alterado, sizeof(call991)); //escreve o registro no mesmo lugar q foi lido, porem com os dados alterados
 	cout << "Registro alterado com sucesso!" << endl;
 	cout << "==================================================" << endl;
