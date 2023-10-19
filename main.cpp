@@ -4,7 +4,7 @@
 
 using namespace std;
 
-struct call991{
+struct call911{
 	int e;
 	int id;//atributo secundario
 	float lat, lng, zip;
@@ -16,7 +16,7 @@ struct call991{
 void TrocarRegistro(fstream& arquivoBin){ 
 	int pos_registroX, pos_registroY;
 	arquivoBin.seekg(0, ios::end);
-	int tamanho = arquivoBin.tellg()/sizeof(call991);
+	int tamanho = arquivoBin.tellg()/sizeof(call911);
 	cout << "==================================================" << endl;
 	cout << "Digite a posicao de um dos registros que deseja trocar" << endl;
 	cout << "Posicoes disponiveis: de 0 a " << tamanho-1 << endl; 
@@ -31,16 +31,16 @@ void TrocarRegistro(fstream& arquivoBin){
 		cout << "Posicao invalida ou ja selecionada. Digite uma posicao valida que não tenha sido selecionada, por favor" << endl;
 		cin >> pos_registroY;
 	}
-	call991 aux1, aux2;
-	arquivoBin.seekg(sizeof(call991)*pos_registroX, ios::beg);
-	arquivoBin.read((char*) &aux1, sizeof(call991));
-	arquivoBin.seekg(sizeof(call991)*pos_registroY, ios::beg);
-	arquivoBin.read((char*) &aux2, sizeof(call991));
+	call911 aux1, aux2;
+	arquivoBin.seekg(sizeof(call911)*pos_registroX, ios::beg);
+	arquivoBin.read((char*) &aux1, sizeof(call911));
+	arquivoBin.seekg(sizeof(call911)*pos_registroY, ios::beg);
+	arquivoBin.read((char*) &aux2, sizeof(call911));
 
-	arquivoBin.seekp(sizeof(call991)*pos_registroY, ios::beg); //escreve cada registro na posicao onde foi lido o outro registro, efetuando a troca
-	arquivoBin.write((const char *) &aux1, sizeof(call991));
-	arquivoBin.seekp(sizeof(call991)*pos_registroX, ios::beg);
-	arquivoBin.write((const char*) &aux2, sizeof(call991));
+	arquivoBin.seekp(sizeof(call911)*pos_registroY, ios::beg); //escreve cada registro na posicao onde foi lido o outro registro, efetuando a troca
+	arquivoBin.write((const char *) &aux1, sizeof(call911));
+	arquivoBin.seekp(sizeof(call911)*pos_registroX, ios::beg);
+	arquivoBin.write((const char*) &aux2, sizeof(call911));
 	cout << "Dados trocados com sucesso!" << endl;	
 	cout << "==================================================" << endl;
 	cout << endl;
@@ -48,7 +48,7 @@ void TrocarRegistro(fstream& arquivoBin){
 
 void AlterarRegistro(fstream& arquivoBin){
 	arquivoBin.seekg(0, ios::end);
-	int tamanho = arquivoBin.tellg()/sizeof(call991);
+	int tamanho = arquivoBin.tellg()/sizeof(call911);
 	int pos_registro_desejado;
 	cout << "==================================================" << endl;
 	cout << "Digite a posicao do registro que deseja alterar" << endl;
@@ -58,9 +58,9 @@ void AlterarRegistro(fstream& arquivoBin){
 		cout << "Posicao invalida. Digite uma posicao valida, por favor" << endl;
 		cin >> pos_registro_desejado;
 	}
-	call991 registro_alterado;
-	arquivoBin.seekg(sizeof(call991)*pos_registro_desejado, ios::beg);
-	arquivoBin.read((char *) &registro_alterado, sizeof(call991)); //le o registro
+	call911 registro_alterado;
+	arquivoBin.seekg(sizeof(call911)*pos_registro_desejado, ios::beg);
+	arquivoBin.read((char *) &registro_alterado, sizeof(call911)); //le o registro
 	cout << "Digite os novos campos do registro, na seguinte ordem:" << endl;
 	cout << "lat, lng, desc, zip, title, timeStamp, twp, addr, e" << endl;
 	cin >> registro_alterado.lat; //substitui os dados
@@ -74,8 +74,8 @@ void AlterarRegistro(fstream& arquivoBin){
 	cin.getline(registro_alterado.twp, 18);
 	cin.getline(registro_alterado.addr, 66);
 	cin >> registro_alterado.e;
-	arquivoBin.seekg(sizeof(call991)*pos_registro_desejado, ios::beg);
-	arquivoBin.write((const char *) &registro_alterado, sizeof(call991)); //escreve o registro no mesmo lugar q foi lido, porem com os dados alterados
+	arquivoBin.seekg(sizeof(call911)*pos_registro_desejado, ios::beg);
+	arquivoBin.write((const char *) &registro_alterado, sizeof(call911)); //escreve o registro no mesmo lugar q foi lido, porem com os dados alterados
 	cout << "Registro alterado com sucesso!" << endl;
 	cout << "==================================================" << endl;
 	cout << endl;
@@ -83,20 +83,20 @@ void AlterarRegistro(fstream& arquivoBin){
 
 void adicionar(fstream& arquivoBin, int posicao) {
     int tamanho;
-    call991 dado;
+    call911 dado;
 
     arquivoBin.seekg(0, ios::end);
-    tamanho = arquivoBin.tellg() / sizeof(call991);
+    tamanho = arquivoBin.tellg() / sizeof(call911);
 
-    arquivoBin.seekg(-sizeof(call991), ios::end);
+    arquivoBin.seekg(-sizeof(call911), ios::end);
     arquivoBin.seekp(0, ios::end);
 
     for (int i = tamanho; i > posicao; i--) {
-        arquivoBin.read((char *) &dado, sizeof(call991));
-        arquivoBin.write((const char *) &dado, sizeof(call991));
+        arquivoBin.read((char *) &dado, sizeof(call911));
+        arquivoBin.write((const char *) &dado, sizeof(call911));
 
-        arquivoBin.seekg(-sizeof(call991), ios::cur);
-        arquivoBin.seekp(-sizeof(call991), ios::cur);
+        arquivoBin.seekg(-sizeof(call911), ios::cur);
+        arquivoBin.seekp(-sizeof(call911), ios::cur);
     }
 
     cout << "===========================================================" << endl;
@@ -123,10 +123,10 @@ void adicionar(fstream& arquivoBin, int posicao) {
     cin >> dado.e;
     cout << endl << "===========================================================" << endl;
 
-    arquivoBin.write((const char *) &dado, sizeof(call991));
+    arquivoBin.write((const char *) &dado, sizeof(call911));
 }
 
-void imprimirDados(call991 dado) {
+void imprimirDados(call911 dado) {
 	string linha = "----------------------------------------------------------------------------------------------------------";
 	cout << "==========================================================================================================" << endl;
 	cout << left << setfill(' ') << setw(10) << dado.id << endl;
@@ -153,22 +153,22 @@ void imprimirDados(call991 dado) {
 }
 
 void visualizar(fstream& arquivoBin, int inicio, int fim) { // não inclui a posição final
-    call991 dado;
-    arquivoBin.seekg(inicio * sizeof(call991), ios::beg);
+    call911 dado;
+    arquivoBin.seekg(inicio * sizeof(call911), ios::beg);
     for (int i = inicio; i < fim; i++) {
-        arquivoBin.read((char *) &dado, sizeof(call991));
+        arquivoBin.read((char *) &dado, sizeof(call911));
         imprimirDados(dado);
-        arquivoBin.seekg(sizeof(call991), ios::cur);
+        arquivoBin.seekg(sizeof(call911), ios::cur);
     }
 }
 
 void visualizar(fstream& arquivoBin) { // visualizar todos
-    call991 dado;
+    call911 dado;
     arquivoBin.seekg(0, ios::beg);
     while(not arquivoBin.eof()) {
-        arquivoBin.read((char *) &dado, sizeof(call991));
+        arquivoBin.read((char *) &dado, sizeof(call911));
         imprimirDados(dado);
-        arquivoBin.seekg(sizeof(call991), ios::cur);
+        arquivoBin.seekg(sizeof(call911), ios::cur);
     }
 }
 
