@@ -8,17 +8,16 @@
 #include <iostream>
 #include <fstream>
 #include <cstring>
-#include <string>
 
 using namespace std;
 
-struct call991{
+struct call911{
 	int e;
 	int id;//atributo secundario
 	float lat, lng, zip;
-	char addr[150]; //atributo primario
-	char desc[150], title[150];
-	char timeStamp[20], twp[150];
+	char addr[66]; //atributo primario
+	char desc[121], title[37];
+	char timeStamp[20], twp[18];
 	
 };
 
@@ -30,7 +29,7 @@ void converter(){ //Convertera dados do arquivo .csv em arquivo binario
 	ifstream ler(arquivo);
 	if(ler){ // a conversao só ocorrera se o arquivo .csv existir
 		cout << "Arquivo encontrado" << endl;
-		call991 c1;
+		call911 c1;
 		fstream escrever("binario.dat", ios::out|ios::binary); 
 		string lixo;
 		char auxiliar;
@@ -43,15 +42,15 @@ void converter(){ //Convertera dados do arquivo .csv em arquivo binario
 			ler >> auxiliar;
 			ler >> c1.lng;
 			ler >> auxiliar;
-			ler.getline(c1.desc, 150, ',');
+			ler.getline(c1.desc, 121, ',');
 			ler >> c1.zip;
 			ler >> auxiliar;
-			ler.getline(c1.title, 150, ','); 
+			ler.getline(c1.title, 37, ','); 
 			ler.getline(c1.timeStamp, 20, ',');
-			ler.getline(c1.twp, 150, ',');
-			ler.getline(c1.addr, 150, ',');
+			ler.getline(c1.twp, 18, ',');
+			ler.getline(c1.addr, 66, ',');
 			ler >> c1.e;
-			escrever.write((const char *) &c1, sizeof(call991)); //escreve os dados obtidos no arquivo binario. 
+			escrever.write((const char *) &c1, sizeof(call911)); //escreve os dados obtidos no arquivo binario. 
 			//Funciona que nem o ofstream num arquivo de texto, com a exceção de estar usando um conjunto de bytes.
 		}
 		cout << "Conversao concluida!" << endl << endl;
