@@ -102,24 +102,32 @@ void AlterarRegistro(fstream& arquivoBin){
 		cout << "Posicao invalida. Digite uma posicao valida, por favor" << endl;
 		cin >> pos_registro_desejado;
 	}
-	call911 registro_alterado;
+	call911 dado;
 	arquivoBin.seekg(sizeof(call911)*pos_registro_desejado, ios::beg);
-	arquivoBin.read((char *) &registro_alterado, sizeof(call911)); //le o registro
-	cout << "Digite os novos campos do registro, na seguinte ordem:" << endl;
-	cout << "lat, lng, desc, zip, title, timeStamp, twp, addr, e" << endl;
-	cin >> registro_alterado.lat; //substitui os dados
-	cin >> registro_alterado.lng;
-	cin.ignore();
-	cin.getline(registro_alterado.desc, 121);
-	cin >> registro_alterado.zip;
-	cin.ignore();
-	cin.getline(registro_alterado.title, 37);
-	cin.getline(registro_alterado.timeStamp, 20);
-	cin.getline(registro_alterado.twp, 18);
-	cin.getline(registro_alterado.addr, 66);
-	cin >> registro_alterado.e;
+	arquivoBin.read((char *) &dado, sizeof(call911)); //le o registro
+    cout << "===========================================================" << endl;
+    cout << "Insira os dados:" << endl;
+    cout << "lat: ";
+    cin >> dado.lat;
+    cout << "lng: ";
+    cin >> dado.lng;
+    cout << "desc: ";
+    cin >> dado.desc;
+    cout << "zip: ";
+    cin >> dado.zip;
+    cout << "title: ";
+    cin >> dado.title;
+    cout << "timeStamp: ";
+    cin >> dado.timeStamp;
+    cout << "twp: ";
+    cin >> dado.twp;
+    cout << "addr: ";
+    cin >> dado.addr;
+    cout << "e: ";
+    cin >> dado.e;
+    cout << "===========================================================" << endl << endl;
 	arquivoBin.seekg(sizeof(call911)*pos_registro_desejado, ios::beg);
-	arquivoBin.write((const char *) &registro_alterado, sizeof(call911)); //escreve o registro no mesmo lugar q foi lido, porem com os dados alterados
+	arquivoBin.write((const char *) &dado, sizeof(call911)); //escreve o registro no mesmo lugar q foi lido, porem com os dados alterados
 	cout << "Registro alterado com sucesso!" << endl;
 	cout << "==================================================" << endl;
 	cout << endl;
