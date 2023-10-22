@@ -57,6 +57,13 @@ void call911::ImprimirDados() {
 	cout << "====================================================================================================================================" << endl << endl;	
 }
 
+void limpaCin() {
+	// descarta o input do usuario que ultrassa o limite do vetor de char
+	cin.clear();
+	string lixo;
+	getline(cin, lixo);
+}
+
 void TrocarRegistro(fstream& arquivoBin){ 
 	int pos_registroX, pos_registroY;
 	arquivoBin.seekg(0, ios::end);
@@ -102,24 +109,49 @@ void AlterarRegistro(fstream& arquivoBin){
 		cout << "Posicao invalida. Digite uma posicao valida, por favor" << endl;
 		cin >> pos_registro_desejado;
 	}
-	call911 registro_alterado;
+	call911 dado;
 	arquivoBin.seekg(sizeof(call911)*pos_registro_desejado, ios::beg);
-	arquivoBin.read((char *) &registro_alterado, sizeof(call911)); //le o registro
-	cout << "Digite os novos campos do registro, na seguinte ordem:" << endl;
-	cout << "lat, lng, desc, zip, title, timeStamp, twp, addr, e" << endl;
-	cin >> registro_alterado.lat; //substitui os dados
-	cin >> registro_alterado.lng;
+	arquivoBin.read((char *) &dado, sizeof(call911)); //le o registro
+	cout << "===========================================================" << endl;
+    cout << "Insira os dados:" << endl;
+    cout << "lat: ";
+    cin >> dado.lat;
+    cout << "lng: ";
+    cin >> dado.lng;
 	cin.ignore();
-	cin.getline(registro_alterado.desc, 121);
-	cin >> registro_alterado.zip;
+    cout << "desc: ";
+	cin.getline(dado.desc, 121);
+	if (cin.fail()) {
+		limpaCin();
+	}
+    cout << "zip: ";
+    cin >> dado.zip;
 	cin.ignore();
-	cin.getline(registro_alterado.title, 37);
-	cin.getline(registro_alterado.timeStamp, 20);
-	cin.getline(registro_alterado.twp, 18);
-	cin.getline(registro_alterado.addr, 66);
-	cin >> registro_alterado.e;
+    cout << "title: ";
+	cin.getline(dado.title, 37);
+	if (cin.fail()) {
+		limpaCin();
+	}
+    cout << "timeStamp: ";
+    cin.getline(dado.timeStamp, 20);
+	if (cin.fail()) {
+		limpaCin();
+	}
+    cout << "twp: ";
+    cin.getline(dado.twp, 18);
+	if (cin.fail()) {
+		limpaCin();
+	}
+    cout << "addr: ";
+    cin.getline(dado.addr, 66);
+	if (cin.fail()) {
+		limpaCin();
+	}
+    cout << "e: ";
+    cin >> dado.e;
+    cout << "===========================================================" << endl << endl;
 	arquivoBin.seekg(sizeof(call911)*pos_registro_desejado, ios::beg);
-	arquivoBin.write((const char *) &registro_alterado, sizeof(call911)); //escreve o registro no mesmo lugar q foi lido, porem com os dados alterados
+	arquivoBin.write((const char *) &dado, sizeof(call911)); //escreve o registro no mesmo lugar q foi lido, porem com os dados alterados
 	cout << "Registro alterado com sucesso!" << endl;
 	cout << "==================================================" << endl;
 	cout << endl;
@@ -157,24 +189,43 @@ void AdicionarRegistro(fstream& arquivoBin) {
     cin >> dado.lat;
     cout << "lng: ";
     cin >> dado.lng;
+	cin.ignore();
     cout << "desc: ";
-    cin >> dado.desc;
+	cin.getline(dado.desc, 121);
+	if (cin.fail()) {
+		limpaCin();
+	}
     cout << "zip: ";
     cin >> dado.zip;
+	cin.ignore();
     cout << "title: ";
-    cin >> dado.title;
+	cin.getline(dado.title, 37);
+	if (cin.fail()) {
+		limpaCin();
+	}
     cout << "timeStamp: ";
-    cin >> dado.timeStamp;
+    cin.getline(dado.timeStamp, 20);
+	if (cin.fail()) {
+		limpaCin();
+	}
     cout << "twp: ";
-    cin >> dado.twp;
+    cin.getline(dado.twp, 18);
+	if (cin.fail()) {
+		limpaCin();
+	}
     cout << "addr: ";
-    cin >> dado.addr;
+    cin.getline(dado.addr, 66);
+	if (cin.fail()) {
+		limpaCin();
+	}
     cout << "e: ";
     cin >> dado.e;
     cout << "===========================================================" << endl << endl;
 
 	arquivoBin.seekp(posicao*sizeof(call911)); 
     arquivoBin.write((const char *) &dado, sizeof(call911)); // insere na posicao desejada que ficou vazia
+	cout << "Registro inserido com sucesso!" << endl;
+	cout << "==================================================" << endl;
 }
 
 void VisualizarIntervalo(fstream& arquivoBin) {
