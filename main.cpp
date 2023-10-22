@@ -1,3 +1,10 @@
+/* Equipe:
+ * Estevão Augusto da Fonseca Santos
+ * Felipe Geraldo de Oliveira
+ * Eduardo Cesar Cauduro Coelho
+ */
+
+
 #include <iostream>
 #include <fstream>
 #include <iomanip>
@@ -6,12 +13,49 @@ using namespace std;
 
 struct call911{
 	int e;
-	int id;//atributo secundario
+	int id; //atributo secundario
 	float lat, lng, zip;
 	char addr[66]; //atributo primario
 	char desc[121], title[37];
 	char timeStamp[20], twp[18];
+
+	void ImprimirDados();
 };
+
+void call911::ImprimirDados() {
+	string linha = "------------------------------------------------------------------------------------------------------------------------------------";
+	cout << "====================================================================================================================================" << endl;
+	cout << left << setfill(' ') << setw(9) << "id";
+	cout << " | " << id << endl;
+	cout << linha << endl;
+	cout << setw(9) << "lat";
+	cout << " | " << lat << endl;
+	cout << linha << endl;
+	cout << setw(9) << "lng";
+	cout << " | " << lng << endl;
+	cout << linha << endl;
+	cout << setw(9) << "desc";
+	cout << " | " << desc << endl;
+	cout << linha << endl;
+	cout << setw(9) << "zip";
+	cout << " | " << zip << endl;
+	cout << linha << endl;
+	cout << setw(9) << "title";
+	cout << " | " << title << endl;
+	cout << linha << endl;
+	cout << setw(9) << "timeStamp";
+	cout << " | " << timeStamp << endl;
+	cout << linha << endl;
+	cout << setw(9) << "twp";
+	cout << " | " << twp << endl;
+	cout << linha << endl;
+	cout << setw(9) << "addr";
+	cout << " | " << addr << endl;
+	cout << linha << endl;
+	cout << setw(9) << "e";
+	cout << " | " << e << endl;
+	cout << "====================================================================================================================================" << endl << endl;	
+}
 
 void TrocarRegistro(fstream& arquivoBin){ 
 	int pos_registroX, pos_registroY;
@@ -90,14 +134,15 @@ void AdicionarRegistro(fstream& arquivoBin) {
 	int posicao;
 	cout << "==================================================" << endl;
 	cout << "Digite a posicao em que deseja inserir" << endl;
-	cout << "Posicoes disponiveis: de 0 a " << tamanho-1 << endl; 
+	cout << "Posicoes disponiveis: de 0 a " << tamanho << endl; 
 	cin >> posicao;
-	while(posicao < 0 or posicao >= tamanho){
+	while(posicao < 0 or posicao > tamanho){
 		cout << "Posicao invalida. Digite uma posicao valida, por favor" << endl;
 		cin >> posicao;
 	}
 
-        for (int i = tamanho-1; i >= posicao; i--) {
+    for (int i = tamanho-1; i >= posicao; i--) {
+		// move todos os registros da posicao desejada ate o final uma posicao a frente
 		arquivoBin.seekg(i*sizeof(call911));
         arquivoBin.read((char *) &dado, sizeof(call911));
 
@@ -107,67 +152,32 @@ void AdicionarRegistro(fstream& arquivoBin) {
 
 	dado.id = tamanho;
     cout << "===========================================================" << endl;
-    cout << "Insira os dados:";
-    cout << endl << "lat: ";
+    cout << "Insira os dados:" << endl;
+    cout << "lat: ";
     cin >> dado.lat;
-    cout << endl << "lng: ";
+    cout << "lng: ";
     cin >> dado.lng;
-    cout << endl << "desc: ";
+    cout << "desc: ";
     cin >> dado.desc;
-    cout << endl << "zip: ";
+    cout << "zip: ";
     cin >> dado.zip;
-    cout << endl << "title: ";
+    cout << "title: ";
     cin >> dado.title;
-    cout << endl << "timeStamp: ";
+    cout << "timeStamp: ";
     cin >> dado.timeStamp;
-    cout << endl << "twp: ";
+    cout << "twp: ";
     cin >> dado.twp;
-    cout << endl << "addr: ";
+    cout << "addr: ";
     cin >> dado.addr;
-    cout << endl << "e: ";
+    cout << "e: ";
     cin >> dado.e;
-    cout << endl << "===========================================================" << endl;
+    cout << "===========================================================" << endl << endl;
 
-	arquivoBin.seekp(posicao*sizeof(call911));
-    arquivoBin.write((const char *) &dado, sizeof(call911));
+	arquivoBin.seekp(posicao*sizeof(call911)); 
+    arquivoBin.write((const char *) &dado, sizeof(call911)); // insere na posicao desejada que ficou vazia
 }
 
-void ImprimirDados(call911 dado) {
-	string linha = "----------------------------------------------------------------------------------------------------------";
-	cout << "==========================================================================================================" << endl;
-	cout << left << setfill(' ') << setw(9) << "id";
-	cout << " | " << dado.id << endl;
-	cout << linha << endl;
-	cout << setw(9) << "lat";
-	cout << " | " << dado.lat << endl;
-	cout << linha << endl;
-	cout << setw(9) << "lng";
-	cout << " | " << dado.lng << endl;
-	cout << linha << endl;
-	cout << setw(9) << "desc";
-	cout << " | " << dado.desc << endl;
-	cout << linha << endl;
-	cout << setw(9) << "zip";
-	cout << " | " << dado.zip << endl;
-	cout << linha << endl;
-	cout << setw(9) << "title";
-	cout << " | " << dado.title << endl;
-	cout << linha << endl;
-	cout << setw(9) << "timeStamp";
-	cout << " | " << dado.timeStamp << endl;
-	cout << linha << endl;
-	cout << setw(9) << "twp";
-	cout << " | " << dado.twp << endl;
-	cout << linha << endl;
-	cout << setw(9) << "addr";
-	cout << " | " << dado.addr << endl;
-	cout << linha << endl;
-	cout << setw(9) << "e";
-	cout << " | " << dado.e << endl;
-	cout << "==========================================================================================================" << endl << endl;	
-}
-
-void VisualizarRegistro(fstream& arquivoBin) { // não inclui a posição final
+void VisualizarIntervalo(fstream& arquivoBin) {
 	int tamanho, inicio, fim;
 	arquivoBin.seekg(0, ios::end);
     tamanho = arquivoBin.tellg() / sizeof(call911);
@@ -181,47 +191,50 @@ void VisualizarRegistro(fstream& arquivoBin) { // não inclui a posição final
 	}
 	cout << endl << "Digite a posicao final" << endl;
 	cin >> fim;
-	while(fim < 0 or fim > tamanho or fim < inicio){
+	while(fim >= tamanho or fim < inicio){
 		cout << "Posicao invalida. Digite uma posicao valida, por favor" << endl;
 		cin >> fim;
 	}
     call911 dado;
     arquivoBin.seekg(inicio * sizeof(call911), ios::beg);
-    for (int i = inicio; i < fim; i++) {
+    for (int i = inicio; i <= fim; i++) {
         arquivoBin.read((char *) &dado, sizeof(call911));
-        ImprimirDados(dado);
+        dado.ImprimirDados();
     }
 }
 
 void VisualizarTodos(fstream& arquivoBin) {
     call911 dado;
+	int tamanho;
+	arquivoBin.seekg(0, ios::end);
+    tamanho = arquivoBin.tellg() / sizeof(call911);
     arquivoBin.seekg(0, ios::beg);
-    while(not arquivoBin.eof()) {
+    for(int i = 0; i < tamanho; i++) {
         arquivoBin.read((char *) &dado, sizeof(call911));
-        ImprimirDados(dado);
+        dado.ImprimirDados();
     }
 }
 
 int main() {
 	fstream arquivoBin("binario.dat", ios::out|ios::in|ios::binary);
-	bool executa_enquanto = true;
 	int opcao;
-	while(executa_enquanto){
-		cout << "-----------------------------------------------" << endl;
-		cout << "Menu principal" << endl;
-		cout << "-----------------------------------------------" << endl;
+	do{
+		cout << "=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#" << endl;
+		cout << "       Operacoes no Arquivo Binario" << endl;
+		cout << "=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#" << endl << endl;
 		cout << "0) Sair" << endl;
 		cout << "1) Trocar dois registros" << endl;
 		cout << "2) Alterar um registro" << endl;
 		cout << "3) Adicionar um registro" << endl;
 		cout << "4) Visualizar todos os registros" << endl;
-		cout << "5) Visualizar um intervalo de registros (nao inclui a posicao final)" << endl;
+		cout << "5) Visualizar um intervalo de registros" << endl << endl;
+		cout << "===============================================" << endl;
 		cout << "Digite sua opcao: ";
 		cin >> opcao;
 		cout << endl;
 		switch(opcao){
 			case 0:
-				executa_enquanto = false;
+				arquivoBin.close();
 				break;
 			case 1:
 				TrocarRegistro(arquivoBin);
@@ -236,13 +249,12 @@ int main() {
 				VisualizarTodos(arquivoBin);
 				break;
 			case 5:
-				VisualizarRegistro(arquivoBin);
+				VisualizarIntervalo(arquivoBin);
 				break;
 			default:
 				cout << "Opcao invalida" << endl;
 				break;		
 		}
-	}
-	arquivoBin.close();
+	} while(opcao != 0);
 	return 0;
 }
