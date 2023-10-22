@@ -105,7 +105,7 @@ void AlterarRegistro(fstream& arquivoBin){
 	call911 dado;
 	arquivoBin.seekg(sizeof(call911)*pos_registro_desejado, ios::beg);
 	arquivoBin.read((char *) &dado, sizeof(call911)); //le o registro
-	cout << "===========================================================" << endl;
+    cout << "===========================================================" << endl;
     cout << "Insira os dados:" << endl;
     cout << "lat: ";
     cin >> dado.lat;

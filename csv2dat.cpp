@@ -91,3 +91,34 @@ int main()
 	
 	return 0;
 }
+
+int main()
+{
+	char comando = '1';
+	
+	do{
+		cout << "#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=" << endl;
+		cout << "      Conversor de arquivo CSV para Binario" << endl;
+		cout << "#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=" << endl << endl;
+		
+		cout << "1) Converter arquivo CSV" << endl;
+		cout << "0) Sair" << endl << endl;
+	
+		cout << "#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=" << endl;
+		cout << "Sua resposta: ";
+		cin >> comando;
+		cout << endl;
+	
+		switch(comando){
+			case '1':
+				converter();
+				break;
+			case '0':
+				break;
+			default:
+				cout << "Opcao inexistente" << endl;
+		}
+	}while(comando != '0');
+	
+	return 0;
+}
