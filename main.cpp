@@ -90,9 +90,9 @@ void AdicionarRegistro(fstream& arquivoBin) {
 	int posicao;
 	cout << "==================================================" << endl;
 	cout << "Digite a posicao em que deseja inserir" << endl;
-	cout << "Posicoes disponiveis: de 0 a " << tamanho-1 << endl; 
+	cout << "Posicoes disponiveis: de 0 a " << tamanho << endl; 
 	cin >> posicao;
-	while(posicao < 0 or posicao >= tamanho){
+	while(posicao < 0 or posicao > tamanho){
 		cout << "Posicao invalida. Digite uma posicao valida, por favor" << endl;
 		cin >> posicao;
 	}
