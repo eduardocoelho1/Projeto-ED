@@ -38,12 +38,16 @@ void intercala(call911* v, int p, int q, int r) {
 
     while ((i <= q) && (j <= r)) {
 		resultado = strcmp(v[i].addr,v[j].addr);
+		
+		// resultado = 1, significa que o v[i].addr é maior que v[j].addr
+		// resultado = -1, significa que o v[i].addr é menor que v[j].addr
+		// resultado = 0, significa que o v[i].addr é igual a v[j].addr
         if (0 > resultado) {
             w[k++] = v[i++];
         } else if(resultado > 0) {
             w[k++] = v[j++];
         }
-		else{
+		else{ //se forem iguais compara-se com os ids
 			if (v[i].id < v[j].id) {
         	    w[k++] = v[i++];
         	} else {
@@ -191,22 +195,54 @@ void dividir_arquivo(fstream& arquivoBin, int numero_de_arquivos, string* nome_d
 	
 void ordenacao_externa(){
     fstream arquivoBin("binario.dat", ios::binary|ios::in|ios::out);
-	arquivoBin.seekg(0, ios::end);
-	int numero_de_structs = arquivoBin.tellg()/sizeof(call911);
-	int numero_de_arquivos;
-	if(numero_de_structs%2000 == 0){
-		numero_de_arquivos = numero_de_structs/2000;
+    if(arquivoBin){ //caso o binario.dat exista
+		arquivoBin.seekg(0, ios::end);
+		int numero_de_structs = arquivoBin.tellg()/sizeof(call911);
+		int numero_de_arquivos;
+		if(numero_de_structs%2000 == 0){
+			numero_de_arquivos = numero_de_structs/2000;
+		} else {
+			numero_de_arquivos = numero_de_structs/2000 + 1;
+			string nome_dos_arquivos[numero_de_arquivos];
+			dividir_arquivo(arquivoBin, numero_de_arquivos, nome_dos_arquivos);
+			arquivoBin.close();
+			fstream arquivoBin1("binario.dat", ios::binary|ios::out);
+			intercala_externo(arquivoBin1, numero_de_arquivos, nome_dos_arquivos, numero_de_structs);
+			cout << "Ordenacao Externa Concluida!" << endl;
+		}
+	} else { //caso o binario.dat nao exista
+		arquivoBin.close();
+		cout << "Arquivo binario nao existe!" << endl;
 	}
-	else
-		numero_de_arquivos = numero_de_structs/2000 + 1;
-	string nome_dos_arquivos[numero_de_arquivos];
-	dividir_arquivo(arquivoBin, numero_de_arquivos, nome_dos_arquivos);
-	arquivoBin.close();
-	fstream arquivoBin1("binario.dat", ios::binary|ios::out);
-	intercala_externo(arquivoBin1, numero_de_arquivos, nome_dos_arquivos, numero_de_structs);
 }
 
 int main(){
-	ordenacao_externa();
+	char opcao;
+	
+	do{
+		cout << "=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#" << endl;
+		cout << "       Ordenador de Arquivos Binarios" << endl;
+		cout << "=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#" << endl << endl;
+	
+		cout << "0)Sair" << endl;
+		cout << "1)Ordenar arquivo" << endl << endl;
+		
+		cout << "=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#" << endl;
+		cout << "Sua resposta: ";
+		
+		
+		cin >> opcao;
+		
+		switch(opcao){
+			case '0':
+				break;
+			case '1':
+				ordenacao_externa();
+				break;
+			default:
+				cout << "Opcao inexistente" << endl;
+		}
+	}while(opcao != '0');
+	
 	return 0;
 }
