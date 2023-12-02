@@ -20,46 +20,16 @@ struct call911{
 	char addr[66]; //atributo primario
 	char desc[121], title[37];
 	char timeStamp[20], twp[18];
-
-	void ImprimirDados();
 };
 
-void call911::ImprimirDados() {
-	string linha = "------------------------------------------------------------------------------------------------------------------------------------";
-	cout << "====================================================================================================================================" << endl;
-	cout << left << setfill(' ') << setw(9) << "id";
-	cout << " | " << id << endl;
-	cout << linha << endl;
-	cout << setw(9) << "lat";
-	cout << " | " << lat << endl;
-	cout << linha << endl;
-	cout << setw(9) << "lng";
-	cout << " | " << lng << endl;
-	cout << linha << endl;
-	cout << setw(9) << "desc";
-	cout << " | " << desc << endl;
-	cout << linha << endl;
-	cout << setw(9) << "zip";
-	cout << " | " << zip << endl;
-	cout << linha << endl;
-	cout << setw(9) << "title";
-	cout << " | " << title << endl;
-	cout << linha << endl;
-	cout << setw(9) << "timeStamp";
-	cout << " | " << timeStamp << endl;
-	cout << linha << endl;
-	cout << setw(9) << "twp";
-	cout << " | " << twp << endl;
-	cout << linha << endl;
-	cout << setw(9) << "addr";
-	cout << " | " << addr << endl;
-	cout << linha << endl;
-	cout << setw(9) << "e";
-	cout << " | " << e << endl;
-	cout << "====================================================================================================================================" << endl << endl;	
-}
+struct arquivos{
+	ifstream arq;
+	int maximo = 0;
+	bool* ativo;
+	call911* buffer;
+};
 
-void intercala(call911 v[], int p, int q, int r) {
+void intercala(call911* v, int p, int q, int r) {
     int i = p, j = q + 1;
     int tamanho = r - p + 1;
     call911 w[tamanho]; // vetor auxiliar
@@ -74,7 +44,7 @@ void intercala(call911 v[], int p, int q, int r) {
             w[k++] = v[j++];
         }
 		else{
-			if (v[i].id > v[j].id) {
+			if (v[i].id < v[j].id) {
         	    w[k++] = v[i++];
         	} else {
             	w[k++] = v[j++];
@@ -106,10 +76,121 @@ void mergesort(call911* a, int inicio, int fim) {
         intercala(a, inicio, meio, fim);
     }
 }
+
+void salva_buffer(fstream& arquivoBin, call911* buffer_saida, int tamanho){
+	for(int i = 0; i < tamanho; i++){
+		arquivoBin.write((const char *) &buffer_saida[i], sizeof(call911));
+		cout << buffer_saida[i].addr << endl;
+	}
+}
+
+void encher_buffer(arquivos& arquivo, int tamanho_buffer){
+	for(int i = 0; i < tamanho_buffer; i++){
+		if(arquivo.arq.read((char *) &arquivo.buffer[i], sizeof(call911))){
+			arquivo.ativo[i] = true;
+		}
+		else
+			arquivo.ativo[i] = false;
+	}
+}
+
+void intercala_externo(fstream& arquivoBin, int numero_de_arquivos, string* nome_dos_arquivos, int quantidade_de_registros_totais){
+	arquivos* arqs = new arquivos[numero_de_arquivos];
+	int tamanho_buffer = 15;
+	for(int i = 0; i < numero_de_arquivos; i++){
+		arqs[i].arq.open(nome_dos_arquivos[i], ios::binary);
+		arqs[i].ativo = new bool[tamanho_buffer];
+		arqs[i].buffer = new call911[tamanho_buffer];
+		encher_buffer(arqs[i], tamanho_buffer);
+	}
+	call911* buffer_saida = new call911[tamanho_buffer];
+	int posicao_arquivo = 0;
+	arquivoBin.seekg(0, ios::end);
+	int quantidade_de_registros_atual = 0;
+	arquivoBin.seekg(0, ios::beg);
+	int posicao_buffer_saida = 0;
+	int posicoes_buffer_entrada[numero_de_arquivos]{0};
+	while(quantidade_de_registros_atual < quantidade_de_registros_totais){
+		posicao_arquivo = 0;
+		while(arqs[posicao_arquivo].ativo[posicoes_buffer_entrada[posicao_arquivo]] == false){
+			posicao_arquivo++;
+		}
+		for(int i = posicao_arquivo + 1; i < numero_de_arquivos; i++){
+			if(0 > strcmp(arqs[i].buffer[posicoes_buffer_entrada[i]].addr, arqs[posicao_arquivo].buffer[posicoes_buffer_entrada[posicao_arquivo]].addr)){
+				if(arqs[i].ativo[posicoes_buffer_entrada[i]] == true)
+				posicao_arquivo = i;
+			}
+			else if(0 == strcmp(arqs[i].buffer[posicoes_buffer_entrada[i]].addr, arqs[posicao_arquivo].buffer[posicoes_buffer_entrada[posicao_arquivo]].addr)){
+				if(arqs[i].buffer[posicoes_buffer_entrada[i]].id < arqs[posicao_arquivo].buffer[posicoes_buffer_entrada[posicao_arquivo]].id){
+					if(arqs[i].ativo[posicoes_buffer_entrada[i]] == true)
+					posicao_arquivo = i;
+				}
+			}
+		}
+		buffer_saida[posicao_buffer_saida] = arqs[posicao_arquivo].buffer[posicoes_buffer_entrada[posicao_arquivo]];
+		posicao_buffer_saida++;
+		posicoes_buffer_entrada[posicao_arquivo]++;
+		quantidade_de_registros_atual++;
+		if(posicao_buffer_saida == tamanho_buffer){
+			salva_buffer(arquivoBin, buffer_saida, tamanho_buffer);
+			posicao_buffer_saida = 0;
+		}
+		if(posicoes_buffer_entrada[posicao_arquivo] == tamanho_buffer){
+			encher_buffer(arqs[posicao_arquivo], tamanho_buffer);
+			posicoes_buffer_entrada[posicao_arquivo] = 0;
+		}
+	}
+	if(posicao_buffer_saida != 0)
+		salva_buffer(arquivoBin, buffer_saida, posicao_buffer_saida);
+	delete buffer_saida;
+	for(int i = 0; i < numero_de_arquivos; i++){
+		delete arqs[i].ativo;
+		delete arqs[i].buffer;
+	}
+	for(int i = 0; i < numero_de_arquivos; i++){
+		arqs[i].arq.close();
+		remove(nome_dos_arquivos[i].c_str());
+	}
+	delete arqs;
+}
+
+void ordena_arquivo(fstream& arq, int tamanho_do_arquivo){
+	call911 vetor[tamanho_do_arquivo];	
+	arq.seekg(0, ios::beg);
+	for(int i = 0; i < tamanho_do_arquivo; i++){
+		arq.read((char *) &vetor[i], sizeof(call911));
+	}
+	mergesort(vetor, 0, tamanho_do_arquivo-1);
+	arq.seekp(0, ios::beg);
+	for(int i = 0; i < tamanho_do_arquivo; i++){
+		arq.write((const char *) &vetor[i], sizeof(call911));
+	}
+	arq.close();
+}
+
+void dividir_arquivo(fstream& arquivoBin, int numero_de_arquivos, string* nome_dos_arquivos){
+	call911 dado;
+	int tamanho_do_arquivo = 0;
+	arquivoBin.seekg(0, ios::beg);
+	for(int i = 0; i < numero_de_arquivos; i++){
+		tamanho_do_arquivo = 0;
+		nome_dos_arquivos[i] = "arquivo" + to_string(i+1) + ".dat";
+		ofstream arq(nome_dos_arquivos[i], ios::binary);
+		for(int j = 0; j < 2000; j++){
+			if(arquivoBin.read((char *) &dado, sizeof(call911))){
+				arq.write((const char *) &dado, sizeof(call911));
+				tamanho_do_arquivo++;
+			}
+		}	
+		arq.close();
+		fstream arq_in_out(nome_dos_arquivos[i], ios::binary|ios::in|ios::out);
+		ordena_arquivo(arq_in_out, tamanho_do_arquivo);
+		arq_in_out.close();
+	}
+}
 	
 void ordenacao_externa(){
-    call911 dado;
-    ifstream arquivoBin("binario.dat", ios::binary);
+    fstream arquivoBin("binario.dat", ios::binary|ios::in|ios::out);
 	arquivoBin.seekg(0, ios::end);
 	int numero_de_structs = arquivoBin.tellg()/sizeof(call911);
 	int numero_de_arquivos;
@@ -119,31 +200,10 @@ void ordenacao_externa(){
 	else
 		numero_de_arquivos = numero_de_structs/2000 + 1;
 	string nome_dos_arquivos[numero_de_arquivos];
-	arquivoBin.seekg(0, ios::beg);
-	int contador = 0;
-	for(int i = 0; i < numero_de_arquivos; i++){
-		nome_dos_arquivos[i] = "arquivo" + to_string(i) + ".dat";
-		ofstream arq(nome_dos_arquivos[i], ios::binary);
-		for(int j = 0; j < 2000; j++){
-			if(arquivoBin.read((char *) &dado, sizeof(call911))){
-				arq.write((const char *) &dado, sizeof(call911));
-				contador++;
-			}
-		}
-		arq.close();
-	}
-	for(int i = 0; i < numero_de_arquivos; i++){
-		ifstream arq(nome_dos_arquivos[i], ios::binary);
-		arq.seekg(0, ios::end);
-		int tamanho_do_vetor = arq.tellg()/sizeof(call911);
-		call911 vetor[tamanho_do_vetor];
-		arq.seekg(0, ios::beg);
-		for(int j = 0; j < tamanho_do_vetor; j++){
-			arq.read((char *) &vetor[j], sizeof(call911));
-		}
-		mergesort(vetor, 0, tamanho_do_vetor-1);
-		arq.close();
-	}
+	dividir_arquivo(arquivoBin, numero_de_arquivos, nome_dos_arquivos);
+	arquivoBin.close();
+	fstream arquivoBin1("binario.dat", ios::binary|ios::out);
+	intercala_externo(arquivoBin1, numero_de_arquivos, nome_dos_arquivos, numero_de_structs);
 }
 
 int main(){
