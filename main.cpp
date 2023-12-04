@@ -258,8 +258,9 @@ int main() {
             case 5:
                 VisualizarIntervalo(arquivoBin);
                 break;
-			case 6:
-				ordenacao_externa();
+	    case 6:
+		ordenacao_externa();
+		break;
             default:
                 cout << "Opcao invalida" << endl;
                 break;		
