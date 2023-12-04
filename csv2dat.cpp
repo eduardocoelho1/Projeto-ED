@@ -4,7 +4,6 @@
  * Eduardo Cesar Cauduro Coelho
  */
 
-
 #include <iostream>
 #include <fstream>
 #include <cstring>

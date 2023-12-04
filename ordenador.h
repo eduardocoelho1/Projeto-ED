@@ -1,5 +1,6 @@
 #ifndef ORDENACAO_H_
 #define ORDENACAO_H_
+
 #include "call911.h"
 using namespace std;
 
