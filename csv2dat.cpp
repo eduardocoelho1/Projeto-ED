@@ -8,18 +8,9 @@
 #include <iostream>
 #include <fstream>
 #include <cstring>
+#include "call911.h"
 
 using namespace std;
-
-struct call911{
-    int e;
-    int id; //atributo secundario
-    float lat, lng, zip;
-    char addr[66]; //atributo primario
-    char desc[121], title[37];
-    char timeStamp[20], twp[18];
-};
-
 
 void converter(){ //Convertera dados do arquivo .csv em arquivo binario
     string arquivo;
