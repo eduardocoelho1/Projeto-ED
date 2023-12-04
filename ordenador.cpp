@@ -116,7 +116,10 @@ void intercala_externo(fstream& arquivoBin, int numero_de_arquivos, string* nome
 	int quantidade_de_registros_atual = 0;
 	arquivoBin.seekg(0, ios::beg);
 	int posicao_buffer_saida = 0;
-	int posicoes_buffer_entrada[numero_de_arquivos]{0}; 
+	int posicoes_buffer_entrada[numero_de_arquivos];
+	for(int i = 0; i < numero_de_arquivos; i++){
+		posicoes_buffer_entrada[i] = 0;
+	} 
 	while(quantidade_de_registros_atual < quantidade_de_registros_totais){
 
 		buffer_saida[posicao_buffer_saida] = encontra_menor(posicao_arquivo, arqs, posicoes_buffer_entrada, numero_de_arquivos);
@@ -139,8 +142,8 @@ void intercala_externo(fstream& arquivoBin, int numero_de_arquivos, string* nome
 
 	delete buffer_saida; //o que ocorre aqui é a desalocação de memória alocada, fecha os arquivos temporarios e os deleta.
 	for(int i = 0; i < numero_de_arquivos; i++){
-		delete arqs[i].ativo;
-		delete arqs[i].buffer;
+		delete [] arqs[i].ativo;
+		delete [] arqs[i].buffer;
 		arqs[i].arq.close();
 		remove(nome_dos_arquivos[i].c_str());
 	}
